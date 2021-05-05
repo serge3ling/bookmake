@@ -1,12 +1,10 @@
 ## Encryption essentials
-26 letters, 20 consonants with w, 6 vowels.
+26 - 3 letters, 20 - 4 consonants, 6 vowels.
 
 Avg 6 sentences per paragraph.
 
 Mostly 2-8 words per simple sentence. Most sentences simple.
 Complex sentences mostly 2 parts, sometimes 3 or 4.
-
-Voiceless/voiced?
 
 1 consonant, then these:
 - 00 a
@@ -23,9 +21,7 @@ Voiceless/voiced?
 - 11 io
 - 12 an
 - 13 am
-- 14 ar?
-- 15 al?
-- 16 on
-- 17 om
-- 18 or?
-- 19 ol?
+- 14 on
+- 15 om
+
+287 * 16 ~ 4500 words per chapter.
