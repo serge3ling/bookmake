@@ -2,22 +2,66 @@ package tk.d4097.bookmake;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class WordMaker {
-  public static final String[] PART1 = {"b", /*"c", */"d", "f", "g", "h", /*"j",*/
-      "k", "l", "m", "n", "p", /*"q", */"r", "s", "t", "v", "z", "x", /*"w"*/};
+  public static final String[] PART1 = {"b", "d", "f", "g", "h",
+      "k", "l", "m", "n", "p", "r", "s", "t", "v", "z", "x"};
   public static final String[] PART2 = {"a", "o", "u", "y", "i", "e", "ao",
       "aw", "oa", "ow", "ia", "io", "an", "am", "on", "om"};
   public static final char[] VOWELS = {'a', 'o', 'u', 'y', 'i', 'e'};
 
+  Random random = new Random();
+
   public String make(byte[] bytes) {
+    char[] splits = makeRandomSplitPattern(bytes.length);
     StringBuilder sb = new StringBuilder();
 
-    for (byte b : bytes) {
-      sb.append(fromByte(b));
+    for (int i = 0; i < bytes.length; i++) {
+      sb.append(fromByte(bytes[i]));
+
+      switch (splits[i]) {
+        case ' ':
+          sb.append(" ");
+          break;
+        case '.':
+          sb.append(". ");
+          break;
+        default:
+      }
     }
 
     return sb.toString();
+  }
+
+  char[] makeRandomSplitPattern(int count) {
+    char[] chars = new char[count];
+    int i = makeWordOffset();
+    while (i < count) {
+      chars[i] = ' ';
+      i += makeWordOffset();
+    }
+    chars[count - 1] = '.';
+    return chars;
+  }
+
+  int makeWordOffset() {
+    int r = random.nextInt(100) + 1;
+    int i = 1; // default for least values
+
+    if ((r > 5) && (r <= 42)) {
+      i = 2;
+    } else if ((r > 42) && (r <= 79)) {
+      i = 3;
+    } else if ((r > 79) && (r <= 94)) {
+      i = 4;
+    } else if ((r > 94) && (r <= 99)) {
+      i = 5;
+    } else if (r > 99) {
+      i = 6;
+    }
+
+    return i;
   }
 
   String fromByte(byte b) {
@@ -32,6 +76,7 @@ public class WordMaker {
     List<Byte> byteList = new ArrayList<>();
     int len = s.length();
     int head = moveHeadToVowel(0, s);
+
     while (head < len) {
       boolean goOn = true;
       int edge = head + 1;
@@ -121,7 +166,6 @@ public class WordMaker {
 
   public static void main(String[] args) {
     WordMaker wm = new WordMaker();
-    //byte[] bb = wm.unmake("Zanbo.");
 
     byte[] b0 = {-128, 4, 68, -29, 0, 122, -17, -48, 51, 127};
     String s = wm.make(b0);
