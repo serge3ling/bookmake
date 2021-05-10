@@ -37,8 +37,10 @@ public class WordMaker {
   char[] makeRandomSplitPattern(int count) {
     char[] chars = new char[count];
     int i = makeWordOffset();
+    int wordsAdded = 0;
     while (i < count) {
-      chars[i] = ' ';
+      chars[i] = makeWordSplitter(wordsAdded);
+      wordsAdded = (chars[i] == ' ') ? (wordsAdded + 1) : 0;
       i += makeWordOffset();
     }
     chars[count - 1] = '.';
@@ -62,6 +64,10 @@ public class WordMaker {
     }
 
     return i;
+  }
+
+  char makeWordSplitter(int wordsAdded) {
+    return ' ';
   }
 
   String fromByte(byte b) {
