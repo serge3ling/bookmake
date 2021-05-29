@@ -10,6 +10,9 @@ public class WordMaker {
   public static final String[] PART2 = {"a", "o", "u", "y", "i", "e", "ao",
       "aw", "oa", "ow", "ia", "io", "an", "am", "on", "om"};
   public static final char[] VOWELS = {'a', 'o', 'u', 'y', 'i', 'e'};
+  public static final int[] SPLIT_LIKELIHOODS = {1, 5, 18, 24, 20, 16, 11, 5};
+  public static final char[] SPLITTERS = {'.', ',', ';', ':', '-'};
+  public static final int[] SPLITTERS_LIKELIHOODS = {60, 25, 5, 5, 5};
 
   Random random = new Random();
 
@@ -27,6 +30,18 @@ public class WordMaker {
         case '.':
           sb.append(". ");
           break;
+        case ',':
+          sb.append(", ");
+          break;
+        case ';':
+          sb.append("; ");
+          break;
+        case ':':
+          sb.append(": ");
+          break;
+        case '-':
+          sb.append(" - ");
+          break;
         default:
       }
     }
@@ -37,10 +52,10 @@ public class WordMaker {
   char[] makeRandomSplitPattern(int count) {
     char[] chars = new char[count];
     int i = makeWordOffset();
-    int wordsAdded = 0;
+    int wordsAdded = 1;
     while (i < count) {
       chars[i] = makeWordSplitter(wordsAdded);
-      wordsAdded = (chars[i] == ' ') ? (wordsAdded + 1) : 0;
+      wordsAdded = (chars[i] == ' ') ? (wordsAdded + 1) : 1;
       i += makeWordOffset();
     }
     chars[count - 1] = '.';
@@ -68,7 +83,23 @@ public class WordMaker {
 
   char makeWordSplitter(int wordsAdded) {
     int r = random.nextInt(100) + 1;
-    return ' ';
+    System.out.println("wordsAdded: " + wordsAdded + ".");
+    int likelihood = (wordsAdded > SPLIT_LIKELIHOODS.length)
+        ? 100 : SPLIT_LIKELIHOODS[wordsAdded - 1];
+    char splitter = ' ';
+    if (r <= likelihood) {
+      r = random.nextInt(100) + 1;;
+      int likelihoodSum = 0;
+      for (int i = 0; i < SPLITTERS.length; i++) {
+        likelihoodSum += SPLIT_LIKELIHOODS[i];
+        if (r <= likelihoodSum) {
+          splitter = SPLITTERS[i];
+          break;
+        }
+      }
+    }
+
+    return splitter;
   }
 
   String fromByte(byte b) {
