@@ -67,6 +67,7 @@ public class WordMaker {
   }
 
   char makeWordSplitter(int wordsAdded) {
+    int r = random.nextInt(100) + 1;
     return ' ';
   }
 
