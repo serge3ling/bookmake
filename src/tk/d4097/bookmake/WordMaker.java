@@ -12,16 +12,18 @@ public class WordMaker {
   public static final char[] VOWELS = {'a', 'o', 'u', 'y', 'i', 'e'};
   public static final int[] SPLIT_LIKELIHOODS = {1, 5, 18, 24, 20, 16, 11, 5};
   public static final char[] SPLITTERS = {'.', ',', ';', ':', '-'};
-  public static final int[] SPLITTERS_LIKELIHOODS = {60, 25, 5, 5, 5};
+  public static final int[] SPLITTERS_LIKELIHOODS = {60, 20, 5, 5, 10};
 
   Random random = new Random();
 
   public String make(byte[] bytes) {
     char[] splits = makeRandomSplitPattern(bytes.length);
     StringBuilder sb = new StringBuilder();
+    boolean capital = true;
 
     for (int i = 0; i < bytes.length; i++) {
-      sb.append(fromByte(bytes[i]));
+      sb.append(fromByte(bytes[i], capital));
+      capital = false;
 
       switch (splits[i]) {
         case ' ':
@@ -29,6 +31,7 @@ public class WordMaker {
           break;
         case '.':
           sb.append(". ");
+          capital = true;
           break;
         case ',':
           sb.append(", ");
@@ -91,7 +94,7 @@ public class WordMaker {
       r = random.nextInt(100) + 1;;
       int likelihoodSum = 0;
       for (int i = 0; i < SPLITTERS.length; i++) {
-        likelihoodSum += SPLIT_LIKELIHOODS[i];
+        likelihoodSum += SPLITTERS_LIKELIHOODS[i];
         if (r <= likelihoodSum) {
           splitter = SPLITTERS[i];
           break;
@@ -102,11 +105,12 @@ public class WordMaker {
     return splitter;
   }
 
-  String fromByte(byte b) {
+  String fromByte(byte b, boolean capital) {
     int extended = 255 & b;
     int part1Index = extended / PART2.length;
     int part2Index = extended % PART2.length;
-    return PART1[part1Index] + PART2[part2Index];
+    String part1 = capital ? PART1[part1Index].toUpperCase() : PART1[part1Index];
+    return part1 + PART2[part2Index];
   }
 
   public byte[] unmake(String string) {
