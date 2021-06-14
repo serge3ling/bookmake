@@ -53,6 +53,10 @@ public class WordMaker {
   }
 
   char[] makeRandomSplitPattern(int count) {
+    if (count == 0) {
+      return new char[0];
+    }
+
     char[] chars = new char[count];
     int i = makeWordOffset();
     int wordsAdded = 1;
