@@ -90,9 +90,9 @@ public class WordMaker {
 
   char makeWordSplitter(int wordsAdded) {
     int r = random.nextInt(100) + 1;
-    System.out.println("wordsAdded: " + wordsAdded + ".");
     int likelihood = (wordsAdded > SPLIT_LIKELIHOODS.length)
         ? 100 : SPLIT_LIKELIHOODS[wordsAdded - 1];
+
     char splitter = ' ';
     if (r <= likelihood) {
       r = random.nextInt(100) + 1;;

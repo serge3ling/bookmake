@@ -12,6 +12,7 @@ public class App {
     msgBtn.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+        FileMaker maker = new FileMaker("from.file", "target");
         JOptionPane.showMessageDialog(null, "The message.");
       }
     });
