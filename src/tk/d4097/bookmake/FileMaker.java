@@ -15,8 +15,8 @@ public class FileMaker {
   }
 
   public void make() throws IOException {
-    input = new BufferedInputStream(new FileInputStream(nameFrom));
     Files.createDirectories(Paths.get(nameTo));
+    input = new BufferedInputStream(new FileInputStream(nameFrom));
     /*
     BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
     writer.write(str);
