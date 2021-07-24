@@ -8,6 +8,7 @@ public class FileMaker {
   private final String nameFrom;
   private final String nameTo;
   private BufferedInputStream input;
+  private int byteCnt;
 
   public FileMaker(String nameFrom, String nameTo) {
     this.nameFrom = nameFrom;
@@ -17,6 +18,7 @@ public class FileMaker {
   public void make() throws IOException {
     Files.createDirectories(Paths.get(nameTo));
     input = new BufferedInputStream(new FileInputStream(nameFrom));
+    byteCnt = input.available();
     /*
     BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
     writer.write(str);
