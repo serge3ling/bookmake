@@ -19,6 +19,8 @@ public class FileMaker {
   private int chapterCnt;
   private List<Integer> volumeList;
 
+  private int volumeDigits;
+
   public FileMaker(String nameFrom, String nameTo) {
     this.nameFrom = nameFrom;
     this.nameTo = nameTo;
@@ -40,6 +42,12 @@ public class FileMaker {
     Splitter volumeSplitter = new Splitter(45, 30, chapterCnt);
     volumeList = volumeSplitter.getList();
 
+    volumeDigits = countDigits(volumeList.size());
+    for (int volumeN = 0; volumeN < volumeList.size(); volumeN++) {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(nameTo + File.separator + "vol-" + prependZeros(volumeN) + ".txt"));
+      for (int chapterN = 0; chapterN < volumeList.get(volumeN); chapterN++) {}
+      writer.close();
+    }
 
     /*
     BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
@@ -47,5 +55,28 @@ public class FileMaker {
     writer.close();
     * */
     input.close();
+  }
+
+  private int countDigits(int size) {
+    int digits = 1;
+    int i = size;
+    int divided = i / 10;
+    while (divided > 0) {
+      i = divided;
+      digits++;
+      divided = i / 10;
+    }
+    return digits;
+  }
+
+  private String prependZeros(int num) {
+    int digits = countDigits(num);
+    String s = "" + num;
+
+    for (int i = 0; i < (volumeDigits - digits); i++) {
+      s = "0" + s;
+    }
+
+    return s;
   }
 }

@@ -3,6 +3,7 @@ package tk.d4097.bookmake;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class App {
   private JPanel panel;
@@ -12,8 +13,13 @@ public class App {
     msgBtn.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        FileMaker maker = new FileMaker("from.file", "target");
-        JOptionPane.showMessageDialog(null, "The message.");
+        try {
+          FileMaker maker = new FileMaker("from.file", "volumes");
+          maker.make();
+          JOptionPane.showMessageDialog(null, "Success.");
+        } catch (IOException exception) {
+          JOptionPane.showMessageDialog(null, "IOException.");
+        }
       }
     });
   }
