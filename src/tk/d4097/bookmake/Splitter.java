@@ -7,7 +7,7 @@ import java.util.Random;
 public class Splitter {
   private final int avg;
   private final int maxDeviation;
-  private final int size;
+  private final int count;
   private final int min;
   private boolean splitDone;
   private List<Integer> list;
@@ -21,9 +21,9 @@ public class Splitter {
   }
 
   private void makeList() {
-    list = new ArrayList<>(size / avg);
+    list = new ArrayList<>(count / avg);
 
-    int left = size;
+    int left = count;
 
     while (left > 2 * avg) {
       int r = min + random.nextInt(2 * maxDeviation);
@@ -42,25 +42,25 @@ public class Splitter {
     splitDone = true;
   }
 
-  public Splitter(int avg, int maxDeviation, int size) {
+  public Splitter(int avg, int maxDeviation, int count) {
     this.avg = avg;
     this.maxDeviation = maxDeviation;
     min = avg - maxDeviation;
-    this.size = size;
+    this.count = count;
 
     checkArgs();
   }
 
   private void checkArgs() {
-    assert (size < 1) : "Size cannot be less than 1.";
+    assert (count < 1) : "Count cannot be less than 1.";
     assert (avg < 1) : "Average cannot be less than 1.";
     assert (avg - maxDeviation < 1) : "Average minus max deviation cannot be less than 1.";
-    assert (avg - maxDeviation > size) : "Average minus max deviation cannot be greater than size.";
+    assert (avg - maxDeviation > count) : "Average minus max deviation cannot be greater than count.";
   }
 
   @Override
   public String toString() {
-    StringBuilder b = new StringBuilder("[avg=" + avg + ", maxDeviation=" + maxDeviation + ", size=" + size);
+    StringBuilder b = new StringBuilder("[avg=" + avg + ", maxDeviation=" + maxDeviation + ", count=" + count);
     b.append(", list=[");
     int last = list.size() - 1;
     if (list.size() > 0) {
