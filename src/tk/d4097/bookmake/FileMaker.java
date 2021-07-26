@@ -8,16 +8,6 @@ import java.util.List;
 public class FileMaker {
   private final String nameFrom;
   private final String nameTo;
-  private BufferedInputStream input;
-
-  private int byteCnt;
-  private List<Integer> paragraphList;
-
-  private int paragraphCnt;
-  private List<Integer> chapterList;
-
-  private int chapterCnt;
-  private List<Integer> volumeList;
 
   private int volumeDigits;
 
@@ -28,33 +18,41 @@ public class FileMaker {
 
   public void make() throws IOException {
     Files.createDirectories(Paths.get(nameTo));
-    input = new BufferedInputStream(new FileInputStream(nameFrom));
+    BufferedInputStream reader = new BufferedInputStream(new FileInputStream(nameFrom));
 
-    byteCnt = input.available();
-    Splitter paragraphSplitter = new Splitter(160, 140, byteCnt);
-    paragraphList = paragraphSplitter.getList();
+    Splitter paragraphSplitter = new Splitter(160, 140, reader.available());
+    List<Integer> paragraphList = paragraphSplitter.getList();
 
-    paragraphCnt = paragraphList.size();
-    Splitter chapterSplitter = new Splitter(70, 56, paragraphCnt);
-    chapterList = chapterSplitter.getList();
+    Splitter chapterSplitter = new Splitter(70, 56, paragraphList.size());
+    List<Integer> chapterList = chapterSplitter.getList();
 
-    chapterCnt = chapterList.size();
-    Splitter volumeSplitter = new Splitter(45, 30, chapterCnt);
-    volumeList = volumeSplitter.getList();
+    Splitter volumeSplitter = new Splitter(45, 30, chapterList.size());
+    List<Integer> volumeList = volumeSplitter.getList();
 
+    WordMaker wordMaker = new WordMaker();
     volumeDigits = countDigits(volumeList.size());
+    int chapterN = 0;
+    int paraN = 0;
     for (int volumeN = 0; volumeN < volumeList.size(); volumeN++) {
       BufferedWriter writer = new BufferedWriter(new FileWriter(nameTo + File.separator + "vol-" + prependZeros(volumeN) + ".txt"));
-      for (int chapterN = 0; chapterN < volumeList.get(volumeN); chapterN++) {}
+
+      for (int chptInner = 1; chptInner <= volumeList.get(volumeN); chptInner++) {
+        writer.write("" + chptInner + ".\n");
+
+        for (int paraInner = 0; paraInner < chapterList.get(chapterN); paraInner++) {
+          byte[] bytes = new byte[paragraphList.get(paraN)];
+          reader.read(bytes);
+          String paragraph = wordMaker.make(bytes);
+          writer.write(paragraph + "\n");
+          paraN++;
+        }
+
+        chapterN++;
+      }
       writer.close();
     }
 
-    /*
-    BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-    writer.write(str);
-    writer.close();
-    * */
-    input.close();
+    reader.close();
   }
 
   private int countDigits(int size) {
