@@ -6,37 +6,32 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class FileMaker {
-  private final String nameFrom;
-  private final String nameTo;
+  private final String openName;
+  private final String messName;
 
   private int volumeDigits;
 
-  public FileMaker(String nameFrom, String nameTo) {
-    this.nameFrom = nameFrom;
-    this.nameTo = nameTo;
+  public FileMaker(String openName, String messName) {
+    this.openName = openName;
+    this.messName = messName;
   }
 
   public void make() throws IOException {
-    Files.createDirectories(Paths.get(nameTo));
-    BufferedInputStream reader = new BufferedInputStream(new FileInputStream(nameFrom));
+    Files.createDirectories(Paths.get(messName));
+    BufferedInputStream reader = new BufferedInputStream(new FileInputStream(openName));
 
-    Splitter paragraphSplitter = new Splitter(160, 140, reader.available());
-    List<Integer> paragraphList = paragraphSplitter.getList();
-
-    Splitter chapterSplitter = new Splitter(70, 56, paragraphList.size());
-    List<Integer> chapterList = chapterSplitter.getList();
-
-    Splitter volumeSplitter = new Splitter(45, 30, chapterList.size());
-    List<Integer> volumeList = volumeSplitter.getList();
+    List<Integer> paragraphList = new Splitter(160, 140, reader.available()).getList();
+    List<Integer> chapterList = new Splitter(70, 56, paragraphList.size()).getList();
+    List<Integer> volumeList = new Splitter(45, 30, chapterList.size()).getList();
 
     WordMaker wordMaker = new WordMaker();
     volumeDigits = countDigits(volumeList.size());
     int chapterN = 0;
     int paraN = 0;
-    for (int volumeN = 0; volumeN < volumeList.size(); volumeN++) {
-      BufferedWriter writer = new BufferedWriter(new FileWriter(nameTo + File.separator + "vol-" + prependZeros(volumeN) + ".txt"));
+    for (int volumeN = 1; volumeN <= volumeList.size(); volumeN++) {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(messName + File.separator + "vol-" + prependZeros(volumeN) + ".txt"));
 
-      for (int chptInner = 1; chptInner <= volumeList.get(volumeN); chptInner++) {
+      for (int chptInner = 1; chptInner <= volumeList.get(volumeN - 1); chptInner++) {
         writer.write("" + chptInner + ".\n");
 
         for (int paraInner = 0; paraInner < chapterList.get(chapterN); paraInner++) {
@@ -52,7 +47,7 @@ public class FileMaker {
       writer.close();
     }
 
-    reader.close();
+    reader.close();unmake();
   }
 
   private int countDigits(int size) {
@@ -69,12 +64,27 @@ public class FileMaker {
 
   private String prependZeros(int num) {
     int digits = countDigits(num);
-    String s = "" + num;
+    StringBuilder sb = new StringBuilder("" + num);
 
     for (int i = 0; i < (volumeDigits - digits); i++) {
-      s = "0" + s;
+      sb.insert(0, "0");
     }
 
-    return s;
+    return sb.toString();
+  }
+
+  public void unmake() throws IOException {
+    final File folder = new File(messName);
+    listFilesForFolder(folder);
+  }
+
+  public void listFilesForFolder(final File folder) {
+    for (final File fileEntry : folder.listFiles()) {
+      if (fileEntry.isDirectory()) {
+        listFilesForFolder(fileEntry);
+      } else {
+        System.out.println(fileEntry.getName());
+      }
+    }
   }
 }

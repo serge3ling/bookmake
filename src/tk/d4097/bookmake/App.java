@@ -14,7 +14,8 @@ public class App {
       @Override
       public void actionPerformed(ActionEvent e) {
         try {
-          FileMaker maker = new FileMaker("from.file", "volumes");
+          //FileMaker maker = new FileMaker("from.file", "volumes");
+          FileMaker maker = new FileMaker("/home/sergio/temp/cfr.zip", "/home/sergio/temp/volumes");
           maker.make();
           JOptionPane.showMessageDialog(null, "Success.");
         } catch (IOException exception) {
