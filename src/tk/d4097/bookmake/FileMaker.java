@@ -3,12 +3,14 @@ package tk.d4097.bookmake;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 public class FileMaker {
   private final String openName;
   private final String messName;
 
+  private final WordMaker wordMaker = new WordMaker();
   private int volumeDigits;
 
   public FileMaker(String openName, String messName) {
@@ -24,7 +26,6 @@ public class FileMaker {
     List<Integer> chapterList = new Splitter(70, 56, paragraphList.size()).getList();
     List<Integer> volumeList = new Splitter(45, 30, chapterList.size()).getList();
 
-    WordMaker wordMaker = new WordMaker();
     volumeDigits = countDigits(volumeList.size());
     int chapterN = 0;
     int paraN = 0;
@@ -47,7 +48,7 @@ public class FileMaker {
       writer.close();
     }
 
-    reader.close();unmake();
+    reader.close();
   }
 
   private int countDigits(int size) {
@@ -74,17 +75,22 @@ public class FileMaker {
   }
 
   public void unmake() throws IOException {
-    final File folder = new File(messName);
-    listFilesForFolder(folder);
-  }
-
-  public void listFilesForFolder(final File folder) {
-    for (final File fileEntry : folder.listFiles()) {
-      if (fileEntry.isDirectory()) {
-        listFilesForFolder(fileEntry);
-      } else {
-        System.out.println(fileEntry.getName());
+    final File dir = new File(messName);
+    File[] files = dir.listFiles();
+    Arrays.sort(files);
+    BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(new File(openName)));
+    for (int i = 0; i < files.length; i++) {
+      System.out.println(files[i]);
+      if (!files[i].isDirectory()) {
+        BufferedReader reader = new BufferedReader(new FileReader(files[i]));
+        String s = reader.readLine();
+        while (s != null) {
+          writer.write(wordMaker.unmake(s));
+          s = reader.readLine();
+        }
+        reader.close();
       }
     }
+    writer.close();
   }
 }
